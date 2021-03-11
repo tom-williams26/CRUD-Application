@@ -1,8 +1,13 @@
 require('dotenv').config();
 const express = require('express');
 const mysql = require('mysql');
+const cors = require('cors');
 
 const app = express();
+
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(cors());
 
 const db = mysql.createPool({
   connectionLimit: 10,
@@ -29,12 +34,16 @@ db.getConnection((err, connection) => {
 });
 
 app.get('/', (req, res) => {
-  // Column Entries to be added.
-  const movieEntry = { movieName: 'inception', movieReview: 'Good movie' };
+  res.send('Home Page');
+});
+
+app.post('/api/insert', (req, res) => {
+  const { movieName, movieReview } = req.body;
   // SQL statement to execute.
-  const sqlInsert = 'INSERT INTO movie_reviews SET ?';
+  const sqlInsert =
+    'INSERT INTO movie_reviews (movieName, movieReview) VALUES (?,?)';
   // Query the database and add the above statement and entries. Throw an error if one is present.
-  db.query(sqlInsert, movieEntry, (err, result) => {
+  db.query(sqlInsert, [movieName, movieReview], (err, result) => {
     if (err) throw err.message;
     console.log(result);
     res.send('Movie Entry Added...');
