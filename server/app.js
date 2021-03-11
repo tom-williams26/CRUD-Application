@@ -37,6 +37,17 @@ app.get('/', (req, res) => {
   res.send('Home Page');
 });
 
+app.get('/api/get', (req, res) => {
+  // SQL statement to execute.
+  const sqlSelect = 'SELECT * FROM movie_reviews';
+  // Query the database and add the above statement and entries. Throw an error if one is present.
+  db.query(sqlSelect, (err, result) => {
+    if (err) throw err.message;
+    res.send(result);
+
+    console.log(result);
+  });
+});
 app.post('/api/insert', (req, res) => {
   const { movieName, movieReview } = req.body;
   // SQL statement to execute.
@@ -45,8 +56,8 @@ app.post('/api/insert', (req, res) => {
   // Query the database and add the above statement and entries. Throw an error if one is present.
   db.query(sqlInsert, [movieName, movieReview], (err, result) => {
     if (err) throw err.message;
-    console.log(result);
     res.send('Movie Entry Added...');
+    console.log(result);
   });
 });
 

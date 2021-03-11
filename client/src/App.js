@@ -1,10 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import Axios from 'axios';
 
 function App() {
   const [movieName, setMovieName] = useState('');
   const [movieReview, setMovieReview] = useState('');
+  const [movieReviewList, setMovieList] = useState([]);
+
+  useEffect(() => {
+    Axios.get('http://localhost:5000/api/get/').then((response) => {
+      // console.log(response.data);
+      setMovieList(response.data);
+    });
+  }, []);
 
   const submitReview = () => {
     Axios.post('http://localhost:5000/api/insert/', {
@@ -37,6 +45,13 @@ function App() {
         />
 
         <button onClick={submitReview}>Submit</button>
+        {movieReviewList.map((val) => {
+          return (
+            <h5>
+              Movie Name: {val.movieName} | Movie Review: {val.movieReview}
+            </h5>
+          );
+        })}
       </div>
     </div>
   );
